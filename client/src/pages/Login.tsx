@@ -1,14 +1,23 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+//@ts-ignore
+import { loginUser } from "../redux/user/auth/userAuthSlice";
 
 function Login() {
+  const dispatch = useDispatch();
+  const { loginError } = useSelector((state: any) => state.userAuth);
+  const navigate = useNavigate();
   const [user, setUser] = useState({
     email: "",
     password: "",
   });
+  const [errors, setErrors] = useState("");
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    console.log(user);
+    dispatch(loginUser(user));
+    if (!loginError) navigate("/");
+    if (loginError) setErrors(loginError);
   };
   return (
     <div className="flex h-screen items-center justify-center">
@@ -16,6 +25,9 @@ function Login() {
         onSubmit={handleSubmit}
         className="w-full p-4 xs:w-96 md:w-[500px] [&>input]:mt-4 [&>input]:w-full [&>input]:rounded-lg [&>input]:p-4 [&>input]:shadow-md"
       >
+        <h2 className="mb-2 text-center text-sm font-semibold text-red-500">
+          {errors}
+        </h2>
         <h1 className="text-center text-2xl font-bold">Login</h1>
         <input
           className="block"

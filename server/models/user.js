@@ -12,6 +12,8 @@ const userSchema = new mongoose.Schema({
     unique: true,
   },
   password: { type: String, required: true, minlength: 3, maxlength: 1024 },
+  country: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now },
 });
 
 const User = mongoose.model("User", userSchema);

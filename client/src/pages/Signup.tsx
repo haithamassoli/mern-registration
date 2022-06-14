@@ -1,6 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+//@ts-ignore
+import { registerUser } from "../redux/user/auth/userAuthSlice";
 
 function Signup() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { registerError } = useSelector((state: any) => state.userAuth);
+
   const [user, setUser] = useState({
     email: "",
     password: "",
@@ -10,14 +18,24 @@ function Signup() {
     terms: false,
     policy: false,
   });
+  const [errors, setErrors] = useState("");
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    console.log(user);
+    // @ts-ignore
+    dispatch(registerUser({ ...user, confirmPassword: undefined }));
+    if (!registerError) {
+      navigate("/");
+    } else {
+      setErrors(registerError);
+    }
   };
   return (
     <div className="flex h-screen items-center justify-center">
       <div className="w-full p-4 xs:w-96 md:w-[800px]">
+        <h2 className="mb-2 text-center text-sm font-semibold text-red-500">
+          {errors}
+        </h2>
         <h1 className="text-center text-2xl font-bold">Sign Up</h1>
         <form
           onSubmit={handleSubmit}

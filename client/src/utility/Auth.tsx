@@ -1,50 +1,23 @@
-// import { createContext, ReactNode, useContext, useState } from "react";
-// import { useNavigate } from "react-router-dom";
-// import Cookies from "js-cookie";
-// import axios from "axios";
+import { Navigate, useLocation } from "react-router-dom";
+interface AuthProps {
+  children: React.ReactNode;
+}
 
-// const AuthContext = createContext(null);
+export function RequiredAuth({ children }: AuthProps) {
+  const location = useLocation();
 
-// interface AuthConsumerProps {
-//     children: ReactNode;
-// }
+  if (!localStorage.getItem("token")) {
+    return <Navigate to={"/login"} state={{ path: location.pathname }} />;
+  }
+  return children;
+}
 
-// export const AuthProvider = ({ children }: AuthConsumerProps) => {
-//   const navigate = useNavigate();
-//   const [isAuthenticated, setIsAuthenticated] = useState(
-//     Cookies.get("token") ? true : false
-//   );
+export function NotRequiredAuth({ children }: AuthProps) {
+  const location = useLocation();
 
-//   const login = () => {
-//     setIsAuthenticated(Cookies.get("token") ? true : false);
-//   };
-
-//   const logout = () => {
-//     axios({
-//       method: "post",
-//       url: "http://127.0.0.1:8000/api/logout",
-//       headers: {
-//         Authorization: `Bearer ${Cookies.get("token")}`,
-//       },
-//     })
-//       .then((res) => {
-//         console.log(res.data);
-//         setIsAuthenticated(Cookies.get("token") ? true : false);
-//         Cookies.remove("token");
-//         navigate("/");
-//       })
-//       .catch((err) => {
-//         console.log(err);
-//       });
-//   };
-
-//   return (
-//     <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
-//       {children}
-//     </AuthContext.Provider>
-//   );
-// };
-
-// export const useAuth = () => {
-//   return useContext(AuthContext);
-// };
+  if (!localStorage.getItem("token")) {
+    return children;
+  } else {
+    return <Navigate to={"/"} state={{ path: location.pathname }} />;
+  }
+}
